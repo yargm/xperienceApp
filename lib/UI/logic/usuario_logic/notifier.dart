@@ -4,17 +4,14 @@ import 'package:xperiences/domain/useCases/userCases.dart';
 
 class UsuarioNotifier extends StateNotifier<UsuarioState> {
   UsuarioNotifier({
-    required InsertarDatos insertarDatos,
     required ObtenerUsuario getUsuario,
     required BorrarDatos deleteData,
     required IniciarSesion iniciarSesion,
   })  : _iniciarSesion = iniciarSesion,
-        _insertarDatos = insertarDatos,
         _getUsuario = getUsuario,
         _deleteData = deleteData,
         super(const UsuarioState.initial());
 
-  final InsertarDatos _insertarDatos;
   final ObtenerUsuario _getUsuario;
   final BorrarDatos _deleteData;
   final IniciarSesion _iniciarSesion;
@@ -33,16 +30,6 @@ class UsuarioNotifier extends StateNotifier<UsuarioState> {
     state = const UsuarioState.loading();
     try {
       final result = await _deleteData.call();
-      state = UsuarioState.data(result: result);
-    } catch (e) {
-      state = UsuarioState.error(e.toString());
-    }
-  }
-
-  Future<void> insertInitialData() async {
-    state = const UsuarioState.loading();
-    try {
-      final result = await _insertarDatos.call();
       state = UsuarioState.data(result: result);
     } catch (e) {
       state = UsuarioState.error(e.toString());

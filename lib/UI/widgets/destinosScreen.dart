@@ -1,15 +1,56 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:xperiences/UI/logic/destino_logic/provider.dart';
+import 'package:xperiences/UI/logic/destino_logic/state.dart';
 import 'package:xperiences/UI/widgets/destinoScreen.dart';
 import 'package:xperiences/core/colors.dart';
 import 'package:xperiences/core/responsive.dart';
+import 'package:xperiences/domain/entidades/destino.dart';
 
-class DestinosScreen extends StatelessWidget {
+class DestinosScreen extends ConsumerStatefulWidget {
   const DestinosScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _DestinosScreenState();
+}
+
+class _DestinosScreenState extends ConsumerState<DestinosScreen> {
+  List<Destino> destinos = [];
+  DestinoState? state;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      ref.read(destinoNotifier.notifier).getDestinos();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive.of(context);
+    ref.listen<DestinoState>(destinoNotifier, (actualEstado, nuevoEstado) {
+      setState(() {
+        state = nuevoEstado;
+      });
+      nuevoEstado.when(
+          initial: () {},
+          loading: () {},
+          data: (data) async {
+            if (data is List<Destino> && data.isNotEmpty) {
+              destinos = data;
+            } else {
+              Fluttertoast.showToast(
+                  msg: "Ocurrió un error, intenta nuevamente");
+            }
+          },
+          error: (e) {
+            Fluttertoast.showToast(msg: "Ocurrió un error, intenta nuevamente");
+          });
+    });
     return SafeArea(
         child: Container(
       height: responsive.hp(100),
@@ -34,43 +75,47 @@ class DestinosScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold),
             ),
             responsive.espacio("largo", 3),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: 4,
-              itemBuilder: (BuildContext context, int index) {
-                return noticiaTile(context);
-              },
-            ),
+            state == const DestinoState.loading()
+                ? Image.asset("assets/loading2.gif", width: responsive.hp(15))
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: destinos.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return noticiaTile(context, destinos[index]);
+                    },
+                  ),
           ],
         ),
       ),
     ));
   }
 
-  Card noticiaTile(BuildContext context) {
+  Card noticiaTile(BuildContext context, Destino destino) {
     return Card(
       elevation: 3,
       margin: EdgeInsets.symmetric(vertical: 7),
       child: ListTile(
         leading: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5), color: Colors.red),
+              borderRadius: BorderRadius.circular(5),
+              image: DecorationImage(
+                image: NetworkImage(
+                  destino.imagen1,
+                ),
+                fit: BoxFit.cover,
+              )),
           height: 60.0,
-          width: 60.0, // fixed width and height
-          child: Image.asset(
-            "assets/user1.png",
-            fit: BoxFit.cover,
-          ),
+          width: 60.0,
         ),
         title: Text(
-          "Destino turístico",
+          destino.nombre,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         subtitle: Column(
           children: [
             Text(
-              "contenido destino asdasd asd asfas fsd fsdfsdfsdfsdf sdfs dfsdfs dfsf sdfsdfsdfsdf sdfsd fsdfs dfsdfsdf asa aasdasd aaaa asdasd aaasdsdsd",
+              destino.descripcion,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -79,7 +124,9 @@ class DestinosScreen extends StatelessWidget {
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(CupertinoPageRoute(
-                        builder: (context) => const DestinoScreen()));
+                        builder: (context) => DestinoScreen(
+                              destino: destino,
+                            )));
                   },
                   style:
                       ElevatedButton.styleFrom(primary: CustomColor.azul_tres),

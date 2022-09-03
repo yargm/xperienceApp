@@ -59,3 +59,35 @@ class _BaseScreenState extends State<BaseScreen> {
     );
   }
 }
+
+class MyDialog extends StatelessWidget {
+  const MyDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        title: Text("Cerrando Sesión :("),
+        content: Text("¿Estás seguro que deseas salir de tu cuenta?"),
+        actions: [
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: CustomColor.azul_tres),
+              onPressed: () async {
+                Navigator.pop(context, true);
+              },
+              child: Text("Salir")),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: CustomColor.azul_tres),
+              onPressed: () async {
+                Navigator.pop(context, false);
+              },
+              child: Text("Cancelar")),
+        ],
+      ),
+    );
+  }
+}

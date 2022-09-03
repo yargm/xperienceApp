@@ -27,17 +27,6 @@ class UsuarioDRepoImpl extends IUsuarioDRepo {
   }
 
   @override
-  Future<bool> insertInitialData() async {
-    try {
-      final result = await _usuarioLocal.insertInitialData();
-      return result;
-    } catch (e) {
-      print(e.toString() + '+********************');
-      return Future.error(e);
-    }
-  }
-
-  @override
   Future obtenerUsuario() async {
     try {
       final result = await _usuarioLocal.obtenerUsuario();

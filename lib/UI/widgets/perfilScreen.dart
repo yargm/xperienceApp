@@ -1,13 +1,40 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:xperiences/UI/logic/usuario_logic/provider.dart';
+import 'package:xperiences/UI/logic/usuario_logic/state.dart';
+import 'package:xperiences/UI/widgets/baseScreen.dart';
+import 'package:xperiences/UI/widgets/splashScreen.dart';
+import 'package:xperiences/core/changeNotifier.dart';
 import 'package:xperiences/core/colors.dart';
 import 'package:xperiences/core/responsive.dart';
 
-class PerfilScreen extends StatelessWidget {
+class PerfilScreen extends ConsumerStatefulWidget {
   const PerfilScreen({Key? key}) : super(key: key);
 
   @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _PerfilScreenState();
+}
+
+class _PerfilScreenState extends ConsumerState<PerfilScreen> {
+  @override
   Widget build(BuildContext context) {
     final responsive = Responsive.of(context);
+    ref.listen<UsuarioState>(usuarioNotifier, (previous, next) {
+      next.when(
+          initial: () {},
+          loading: () {},
+          data: (data) async {
+            print(data);
+            Navigator.of(context).pushAndRemoveUntil(
+                CupertinoPageRoute(builder: (context) => SplashScreen()),
+                (route) => false);
+          },
+          error: (error) {
+            Fluttertoast.showToast(msg: "Ocurrió un error, intenta nuevamente");
+          });
+    });
     return SafeArea(
       child: Container(
         height: responsive.hp(100),
@@ -29,15 +56,16 @@ class PerfilScreen extends StatelessWidget {
                     height: 50.0,
                     width: 50.0, // fixed width and height
                     child: Image.asset(
-                      "assets/user1.png",
+                      ref.read(controller.notifier).usuarioActual!.imagenPath,
                       fit: BoxFit.cover,
                     ),
                   ),
                   title: Text(
-                    "Nombre de usuario",
+                    ref.read(controller.notifier).usuarioActual!.nombre,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  subtitle: Text("correo@correo.com"),
+                  subtitle:
+                      Text(ref.read(controller.notifier).usuarioActual!.correo),
                   trailing: notificacionIcono(),
                 )),
             responsive.espacio("largo", 2),
@@ -73,7 +101,16 @@ class PerfilScreen extends StatelessWidget {
                 )),
             responsive.espacio("largo", 2),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                var salir = await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return MyDialog();
+                    });
+                if (salir) {
+                  await ref.read(usuarioNotifier.notifier).borrarDatos();
+                }
+              },
               child: Text("Cerrar sesión"),
               style: ElevatedButton.styleFrom(primary: CustomColor.azul_tres),
             )

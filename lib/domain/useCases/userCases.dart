@@ -1,34 +1,26 @@
 import 'package:xperiences/domain/repositorio/iUsuarioDRepo.dart';
 
-class InsertarDatos {
-  InsertarDatos(this._userLocalRepo);
-
-  final IUsuarioDRepo _userLocalRepo;
-
-  Future<bool> call() async => await _userLocalRepo.insertInitialData();
-}
-
 class ObtenerUsuario {
-  ObtenerUsuario(this._userLocalRepo);
+  ObtenerUsuario(this._userRepo);
 
-  final IUsuarioDRepo _userLocalRepo;
+  final IUsuarioDRepo _userRepo;
 
-  Future<bool> call() async => await _userLocalRepo.obtenerUsuario();
+  Future<dynamic> call() async => await _userRepo.obtenerUsuario();
 }
 
 class BorrarDatos {
-  BorrarDatos(this._userLocalRepo);
+  BorrarDatos(this._userRepo);
 
-  final IUsuarioDRepo _userLocalRepo;
+  final IUsuarioDRepo _userRepo;
 
-  Future<bool> call() async => await _userLocalRepo.borrarDatos();
+  Future<bool> call() async => await _userRepo.borrarDatos();
 }
 
 class IniciarSesion {
-  IniciarSesion(this._userLocalRepo);
+  IniciarSesion(this._userRepo);
 
-  final IUsuarioDRepo _userLocalRepo;
+  final IUsuarioDRepo _userRepo;
 
-  Future<bool> call(String correo, String contrasena) async =>
-      await _userLocalRepo.iniciarSesion(correo, contrasena);
+  Future<dynamic> call(String correo, String contrasena) async =>
+      await _userRepo.iniciarSesion(correo, contrasena);
 }

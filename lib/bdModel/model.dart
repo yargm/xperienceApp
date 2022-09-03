@@ -37,7 +37,6 @@ class XperienceDatabase {
   //crea las consultas para crear las tablas
   Future<bool> createTable(
       Database db, String tableName, Map<String, String> columns) async {
-    print("creo $tableName");
     if (columns.isEmpty) return false;
     try {
       var script = 'CREATE TABLE $tableName (';
@@ -59,7 +58,6 @@ class XperienceDatabase {
 
   //borra tablas
   Future<int> deleteAll(String tableName) async {
-    print(tableName);
     if (_database != null) {
       return await _database!.delete(tableName);
     } else {
@@ -78,10 +76,7 @@ class XperienceDatabase {
     'nombre': textType,
     'correo': textType,
     'contrasena': textType,
-    'tokenFirebase': textType,
     'imagenPath': textType,
-    'lat': textType,
-    'lon': textType,
   };
 
   static const Map<String, String> columnasDestino = {

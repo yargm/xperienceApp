@@ -16,11 +16,6 @@ final _usuarioRepo = Provider<IUsuarioDRepo>((ref) {
   return UsuarioDRepoImpl(repo);
 });
 
-final _insertarDatos = Provider<InsertarDatos>((ref) {
-  final repo = ref.watch(_usuarioRepo);
-  return InsertarDatos(repo);
-});
-
 final _getUsuario = Provider<ObtenerUsuario>((ref) {
   final repo = ref.watch(_usuarioRepo);
   return ObtenerUsuario(repo);
@@ -38,12 +33,10 @@ final _iniciarSesion = Provider<IniciarSesion>((ref) {
 
 final usuarioNotifier =
     StateNotifierProvider.autoDispose<UsuarioNotifier, UsuarioState>((ref) {
-  final insertarDatos = ref.watch(_insertarDatos);
   final getUsuario = ref.watch(_getUsuario);
   final deleteData = ref.watch(_deleteData);
   final iniciarSesion = ref.watch(_iniciarSesion);
   return UsuarioNotifier(
-      insertarDatos: insertarDatos,
       getUsuario: getUsuario,
       deleteData: deleteData,
       iniciarSesion: iniciarSesion);

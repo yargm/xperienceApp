@@ -92,9 +92,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         controller: widget.controller,
         textInputAction: widget.textInputAction,
         keyboardType: widget.keyboardType,
-        obscureText: (widget.isPasswordField != null &&
-            widget.isPasswordField! &&
-            !_isPasswordRevealed),
+        obscureText: widget.isPasswordField ?? false,
         focusNode: widget.currentFocus,
         textCapitalization: TextCapitalization.sentences,
         onFieldSubmitted: (term) {

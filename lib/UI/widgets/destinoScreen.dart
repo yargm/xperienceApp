@@ -1,20 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:xperiences/core/changeNotifier.dart';
 import 'package:xperiences/core/colors.dart';
 import 'package:xperiences/core/responsive.dart';
+import 'package:xperiences/domain/entidades/destino.dart';
+import 'dart:async';
 
-class DestinoScreen extends StatefulWidget {
-  const DestinoScreen({Key? key}) : super(key: key);
+class DestinoScreen extends ConsumerStatefulWidget {
+  Destino destino;
+  DestinoScreen({Key? key, required this.destino}) : super(key: key);
 
   @override
-  State<DestinoScreen> createState() => _DestinoScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _DestinoScreenState();
 }
 
-class _DestinoScreenState extends State<DestinoScreen> {
+class _DestinoScreenState extends ConsumerState<DestinoScreen> {
   int page = 0;
   bool isMapView = false;
+
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive.of(context);
+    Completer<GoogleMapController> _controller = Completer();
+    List<Marker> marcador = [
+      Marker(
+          markerId: MarkerId(widget.destino.idDestino.toString()),
+          draggable: false,
+          onTap: () {
+            ref.read(controller.notifier).openUrl(
+                "https://www.google.com.mx/maps/search/?api=1&query=${widget.destino.lat},${widget.destino.lon}");
+          },
+          infoWindow: InfoWindow(title: widget.destino.nombre),
+          position: LatLng(widget.destino.lat, widget.destino.lon))
+    ];
     PageController controlCarrusel = PageController();
     return Scaffold(
       appBar: AppBar(
@@ -35,7 +54,7 @@ class _DestinoScreenState extends State<DestinoScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Nombre del destino",
+                          widget.destino.nombre,
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -51,14 +70,13 @@ class _DestinoScreenState extends State<DestinoScreen> {
                           ),
                           SizedBox(width: 5),
                           Text(
-                            "Municipio, Estado",
+                            "${widget.destino.municipio}, Chiapas",
                             style: TextStyle(
                                 fontSize: 15, color: Colors.grey[600]),
                           )
                         ],
                       ),
                       Container(
-                        color: Colors.amber,
                         height: responsive.hp(25),
                         width: responsive.width,
                         margin:
@@ -71,27 +89,9 @@ class _DestinoScreenState extends State<DestinoScreen> {
                             });
                           },
                           children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 30),
-                              child: Image.asset(
-                                "assets/user2.png",
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 30),
-                              child: Image.asset(
-                                "assets/user2.png",
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 30),
-                              child: Image.asset(
-                                "assets/user2.png",
-                                fit: BoxFit.contain,
-                              ),
-                            ),
+                            imageItem(widget.destino.imagen1),
+                            imageItem(widget.destino.imagen2),
+                            imageItem(widget.destino.imagen3),
                           ],
                         ),
                       ),
@@ -179,18 +179,45 @@ class _DestinoScreenState extends State<DestinoScreen> {
                       ]),
                       Container(
                         padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 15),
                         child: isMapView
                             ? Container(
                                 height: responsive.hp(50),
+                                child: GoogleMap(
+                                  zoomGesturesEnabled: false,
+                                  scrollGesturesEnabled: false,
+                                  markers: Set.from(marcador),
+                                  mapType: MapType.normal,
+                                  initialCameraPosition: CameraPosition(
+                                      target: LatLng(widget.destino.lat,
+                                          widget.destino.lon),
+                                      zoom: 16),
+                                  onMapCreated:
+                                      (GoogleMapController controller) {
+                                    if (!_controller.isCompleted) {
+                                      _controller.complete(controller);
+                                    } else {}
+                                  },
+                                ),
                               )
-                            : Text(" este es el texto de descripción"),
+                            : Text(
+                                widget.destino.descripcion,
+                              ),
                       ),
                     ],
                   ))
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Container imageItem(String image) {
+    return Container(
+      child: Image.network(
+        image,
+        fit: BoxFit.contain,
       ),
     );
   }

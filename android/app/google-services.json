@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "57726625826",
+    "project_id": "xperience-5c218",
+    "storage_bucket": "xperience-5c218.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57726625826:android:f974b9359884098236827b",
+        "android_client_info": {
+          "package_name": "com.example.xperiences"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "57726625826-rr1o4pg6nkt7fifi6jaqmocr6613gask.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9oKMorkLUUeciV4oXK8NqY6dwTFts4Lg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "57726625826-rr1o4pg6nkt7fifi6jaqmocr6613gask.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
