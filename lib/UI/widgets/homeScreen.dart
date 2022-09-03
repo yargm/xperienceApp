@@ -249,6 +249,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   getPNG(String code) {
+    print(code);
     switch (code) {
       case "03d":
         return "03.png";
@@ -281,7 +282,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return "50.png";
 
       default:
-        code + ".png";
+        return code + ".png";
     }
   }
 }
